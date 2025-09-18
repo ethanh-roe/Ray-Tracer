@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 /**
  * orthographic camera instead of perspective camera
  * 
@@ -18,6 +20,9 @@
 
  #define X 1024
  #define Y 1024
+
+ // Zero possible and get as close as possible to 1 without hitting it.
+ #define frand() (rand() / (RAND_MAX + 1.0))
 
  // Index 0 is x dim, 1 is y dim, 2 is z dim
  typedef double vec3[3];
@@ -88,6 +93,8 @@
         for(x = 0; x < X; x++){
             // For aliasing, 
             for(s = 0; s < 4; s++){
+                /**
+                 * This is aliased but has bad sampling
                 switch(s){
                     case 0:
                     sx = -(1.0 / (2.0 * X));
@@ -107,6 +114,12 @@
                     break;
 
                 }
+                */
+                // Get a random number. Scale it to the dimensions of the pixel
+                // The subtract half a pixel.
+                sx = (frand() / X) - (1.0 / (2.0 * X));
+                sy = (frand() / Y) - (1.0 / (2.0 * Y));
+
                 dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X) + sx;
                 dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y) + sy;
 
