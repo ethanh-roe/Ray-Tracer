@@ -24,6 +24,8 @@
  // Zero possible and get as close as possible to 1 without hitting it.
  #define frand() (rand() / (RAND_MAX + 1.0))
 
+ #define SAMPLES_PER_PIXEL 1000
+
  // Index 0 is x dim, 1 is y dim, 2 is z dim
  typedef double vec3[3];
 
@@ -92,9 +94,10 @@
     for(y = 0; y < Y; y++){
         for(x = 0; x < X; x++){
             // For aliasing, 
-            for(s = 0; s < 4; s++){
+            for(s = 0; s < SAMPLES_PER_PIXEL; s++){
                 /**
                  * This is aliased but has bad sampling
+                 * Also only works with 4 samples per pixel
                 switch(s){
                     case 0:
                     sx = -(1.0 / (2.0 * X));
@@ -166,9 +169,9 @@
     for(y = Y - 1; y >= 0; y--){
         for(x = 0; x < X; x++){
             fprintf(f, "%d %d %d\n",
-                (unsigned char) ((image[y][x][0] * 255.99) / 4.0),
-                (unsigned char) ((image[y][x][1] * 255.99) / 4.0),
-                (unsigned char) ((image[y][x][2] * 255.99) / 4.0));
+                (unsigned char) ((image[y][x][0] * 255.99) / SAMPLES_PER_PIXEL),
+                (unsigned char) ((image[y][x][1] * 255.99) / SAMPLES_PER_PIXEL),
+                (unsigned char) ((image[y][x][2] * 255.99) / SAMPLES_PER_PIXEL));
         }
     }
     return 0;
