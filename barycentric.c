@@ -51,12 +51,12 @@
     out[2] = v[2] - w[2];
  }
 
- double image[Y][X][3];
+ double image[Y][X][3]; // Zero by placement
 
  int main(int argc, char *argv[])
 {
-    int y, x;
-    double dy, dx;
+    int y, x, s;
+    double dy, dx, sy, sx;
     FILE *f;
     vec3 p;
     vec3 v1, v2;
@@ -83,44 +83,68 @@
     vec3_cross(n, v1, v2);
 
     // Produce image
+    
     for(y = 0; y < Y; y++){
         for(x = 0; x < X; x++){
-            dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X);
-            dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y);
+            // For aliasing, 
+            for(s = 0; s < 4; s++){
+                switch(s){
+                    case 0:
+                    sx = -(1.0 / (2.0 * X));
+                    sy = -(1.0 / (2.0 * Y));
+                    break;
+                    case 1:
+                    sx = (1.0 / (2.0 * X));
+                    sy = -(1.0 / (2.0 * Y));
+                    break;
+                    case 2:
+                    sx = -(1.0 / (2.0 * X));
+                    sy = (1.0 / (2.0 * Y));
+                    break;
+                    case 3:
+                    sx = (1.0 / (2.0 * X));
+                    sy = (1.0 / (2.0 * Y));
+                    break;
 
-            p[0] = dx;
-            p[1] = dy;
-            p[2] = -1.0; // Triangle place is at -1
+                }
+                dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X);
+                dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y);
 
-            // na = (c - b) x (p - b)
-            vec3_sub(v1, t.v3, t.v2);
-            vec3_sub(v2, p, t.v2);
-            vec3_cross(na, v1, v2);
+                p[0] = dx;
+                p[1] = dy;
+                p[2] = -1.0; // Triangle place is at -1
 
-            // nb = (a - c) x (p - c)
-            vec3_sub(v1, t.v1, t.v3);
-            vec3_sub(v2, p, t.v3);
-            vec3_cross(nb, v1, v2);
-            // nc = (b - a) x (p - a)
-            vec3_sub(v1, t.v2, t.v1);
-            vec3_sub(v2, p, t.v1);
-            vec3_cross(nc, v1, v2);
+                // na = (c - b) x (p - b)
+                vec3_sub(v1, t.v3, t.v2);
+                vec3_sub(v2, p, t.v2);
+                vec3_cross(na, v1, v2);
 
-            bary[0] = vec3_dot(n, na) / vec3_dot(n, n);
-            bary[1] = vec3_dot(n, nb) / vec3_dot(n, n);
-            bary[2] = vec3_dot(n, nc) / vec3_dot(n, n);
+                // nb = (a - c) x (p - c)
+                vec3_sub(v1, t.v1, t.v3);
+                vec3_sub(v2, p, t.v3);
+                vec3_cross(nb, v1, v2);
+                // nc = (b - a) x (p - a)
+                vec3_sub(v1, t.v2, t.v1);
+                vec3_sub(v2, p, t.v1);
+                vec3_cross(nc, v1, v2);
 
-            // check if we hit something
-            // 1 is max brightness, 0 is min brightness
-            if (bary[0] >= 0 && bary[1] >= 0 && bary[2] >= 0){
-                // image[y][x][0] = image[y][x][1] = image[y][x][2] = 1.0;
-                image[y][x][0] = bary[0];
-                image[y][x][1] = bary[1];
-                image[y][x][2] = bary[2];
+                bary[0] = vec3_dot(n, na) / vec3_dot(n, n);
+                bary[1] = vec3_dot(n, nb) / vec3_dot(n, n);
+                bary[2] = vec3_dot(n, nc) / vec3_dot(n, n);
+
+                // check if we hit something
+                // 1 is max brightness, 0 is min brightness
+                if (bary[0] >= 0 && bary[1] >= 0 && bary[2] >= 0){
+                    image[y][x][0] = image[y][x][1] = image[y][x][2] += 1.0;
+
+                    // For gradual colors
+                    // image[y][x][0] = bary[0];
+                    // image[y][x][1] = bary[1];
+                    // image[y][x][2] = bary[2];
+                }
             }
         }
     }
-
     // Write image
     f = fopen("barycentric.ppm", "w");
     fprintf(f, "P3\n%d\n%d\n255\n", X, Y);
@@ -129,9 +153,9 @@
     for(y = Y - 1; y >= 0; y--){
         for(x = 0; x < X; x++){
             fprintf(f, "%d %d %d\n",
-                (unsigned char) (image[y][x][0] * 255.99),
-                (unsigned char) (image[y][x][1] * 255.99),
-                (unsigned char) (image[y][x][2] * 255.99));
+                (unsigned char) ((image[y][x][0] * 255.99) / 4.0),
+                (unsigned char) ((image[y][x][1] * 255.99) / 4.0),
+                (unsigned char) ((image[y][x][2] * 255.99) / 4.0));
         }
     }
     return 0;
