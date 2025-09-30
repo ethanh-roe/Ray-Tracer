@@ -21,10 +21,14 @@
  #define X 1024
  #define Y 1024
 
+
  // Zero possible and get as close as possible to 1 without hitting it.
  #define frand() (rand() / (RAND_MAX + 1.0))
 
  #define SAMPLES_PER_PIXEL 1000
+
+ // Enables aliasing
+ #define ALIASING 0
 
  // Index 0 is x dim, 1 is y dim, 2 is z dim
  typedef double vec3[3];
@@ -94,42 +98,80 @@
     for(y = 0; y < Y; y++){
         for(x = 0; x < X; x++){
             // For aliasing, 
-            for(s = 0; s < SAMPLES_PER_PIXEL; s++){
-                /**
-                 * This is aliased but has bad sampling
-                 * Also only works with 4 samples per pixel
-                switch(s){
-                    case 0:
-                    sx = -(1.0 / (2.0 * X));
-                    sy = -(1.0 / (2.0 * Y));
-                    break;
-                    case 1:
-                    sx = (1.0 / (2.0 * X));
-                    sy = -(1.0 / (2.0 * Y));
-                    break;
-                    case 2:
-                    sx = -(1.0 / (2.0 * X));
-                    sy = (1.0 / (2.0 * Y));
-                    break;
-                    case 3:
-                    sx = (1.0 / (2.0 * X));
-                    sy = (1.0 / (2.0 * Y));
-                    break;
-
+            if(ALIASING == 1){
+                for(s = 0; s < SAMPLES_PER_PIXEL; s++){
+                    /**
+                     * This is aliased but has bad sampling
+                     * Also only works with 4 samples per pixel
+                    switch(s){
+                        case 0:
+                        sx = -(1.0 / (2.0 * X));
+                        sy = -(1.0 / (2.0 * Y));
+                        break;
+                        case 1:
+                        sx = (1.0 / (2.0 * X));
+                        sy = -(1.0 / (2.0 * Y));
+                        break;
+                        case 2:
+                        sx = -(1.0 / (2.0 * X));
+                        sy = (1.0 / (2.0 * Y));
+                        break;
+                        case 3:
+                        sx = (1.0 / (2.0 * X));
+                        sy = (1.0 / (2.0 * Y));
+                        break;
+    
+                    }
+                    */
+                    // Get a random number. Scale it to the dimensions of the pixel
+                    // The subtract half a pixel.
+                    sx = (frand() / X) - (1.0 / (2.0 * X));
+                    sy = (frand() / Y) - (1.0 / (2.0 * Y));
+    
+                    dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X) + sx;
+                    dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y) + sy;
+    
+                    p[0] = dx;
+                    p[1] = dy;
+                    p[2] = -1.0; // Triangle place is at -1
+    
+                    // na = (c - b) x (p - b)
+                    vec3_sub(v1, t.v3, t.v2);
+                    vec3_sub(v2, p, t.v2);
+                    vec3_cross(na, v1, v2);
+    
+                    // nb = (a - c) x (p - c)
+                    vec3_sub(v1, t.v1, t.v3);
+                    vec3_sub(v2, p, t.v3);
+                    vec3_cross(nb, v1, v2);
+                    // nc = (b - a) x (p - a)
+                    vec3_sub(v1, t.v2, t.v1);
+                    vec3_sub(v2, p, t.v1);
+                    vec3_cross(nc, v1, v2);
+    
+                    bary[0] = vec3_dot(n, na) / vec3_dot(n, n);
+                    bary[1] = vec3_dot(n, nb) / vec3_dot(n, n);
+                    bary[2] = vec3_dot(n, nc) / vec3_dot(n, n);
+    
+                    // check if we hit something
+                    // 1 is max brightness, 0 is min brightness
+                    if (bary[0] >= 0 && bary[1] >= 0 && bary[2] >= 0){
+                        image[y][x][0] = image[y][x][1] = image[y][x][2] += 1.0;    
+    
+                        // For gradual colors
+                        // image[y][x][0] = bary[0];
+                        // image[y][x][1] = bary[1];
+                        // image[y][x][2] = bary[2];
+                    }
                 }
-                */
-                // Get a random number. Scale it to the dimensions of the pixel
-                // The subtract half a pixel.
-                sx = (frand() / X) - (1.0 / (2.0 * X));
-                sy = (frand() / Y) - (1.0 / (2.0 * Y));
-
-                dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X) + sx;
-                dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y) + sy;
-
+            } else{
+                dx = ((x - (X / 2.0)) / (X / 2.0)) + (1 / X);
+                dy = ((y - (Y / 2.0)) / (Y / 2.0)) + (1 / Y);
+    
                 p[0] = dx;
                 p[1] = dy;
                 p[2] = -1.0; // Triangle place is at -1
-
+    
                 // na = (c - b) x (p - b)
                 vec3_sub(v1, t.v3, t.v2);
                 vec3_sub(v2, p, t.v2);
@@ -151,14 +193,15 @@
                 // check if we hit something
                 // 1 is max brightness, 0 is min brightness
                 if (bary[0] >= 0 && bary[1] >= 0 && bary[2] >= 0){
-                    image[y][x][0] = image[y][x][1] = image[y][x][2] += 1.0;
+                    // image[y][x][0] = image[y][x][1] = image[y][x][2] += 1.0;
 
                     // For gradual colors
-                    // image[y][x][0] = bary[0];
-                    // image[y][x][1] = bary[1];
-                    // image[y][x][2] = bary[2];
+                    image[y][x][0] = bary[0];
+                    image[y][x][1] = bary[1];
+                    image[y][x][2] = bary[2];
                 }
             }
+            
         }
     }
     // Write image
@@ -168,10 +211,18 @@
     // iterate over our space
     for(y = Y - 1; y >= 0; y--){
         for(x = 0; x < X; x++){
-            fprintf(f, "%d %d %d\n",
-                (unsigned char) ((image[y][x][0] * 255.99) / SAMPLES_PER_PIXEL),
-                (unsigned char) ((image[y][x][1] * 255.99) / SAMPLES_PER_PIXEL),
-                (unsigned char) ((image[y][x][2] * 255.99) / SAMPLES_PER_PIXEL));
+            if (ALIASING == 1){
+                fprintf(f, "%d %d %d\n",
+                    (unsigned char) (image[y][x][0] * 255.99 / SAMPLES_PER_PIXEL),
+                    (unsigned char) (image[y][x][1] * 255.99 / SAMPLES_PER_PIXEL),
+                    (unsigned char) (image[y][x][2] * 255.99 / SAMPLES_PER_PIXEL));
+            } else{
+                fprintf(f, "%d %d %d\n",
+                    (unsigned char) (image[y][x][0] * 255.99),
+                    (unsigned char) (image[y][x][1] * 255.99),
+                    (unsigned char) (image[y][x][2] * 255.99));
+            }
+            
         }
     }
     return 0;
