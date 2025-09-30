@@ -14,6 +14,8 @@ int main(int argc, char *argv[]){
     f = fopen("test_image.ppm", "w");
     fprintf(f, "P3\n%d\n%d\n255\n", image_width, image_height);
     for(j = 0; j < image_height; j++){
+        fprintf(stderr, "\rScanlines remaining: %d ", image_height - j);
+        fflush(stderr);  // make sure it prints immediately
         for(i = 0; i < image_width; i++){
             r = (double) i / (image_width-1);
             g = (double) j / (image_height-1);
@@ -29,6 +31,7 @@ int main(int argc, char *argv[]){
                 (unsigned char) (ib));
         }
     }
+    fprintf(stderr, "\rDone.                 \n");
     fclose(f);
     return 0;
 }
