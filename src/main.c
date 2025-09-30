@@ -1,3 +1,5 @@
+#include "../include/vec3.h"
+#include "../include/color.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[]){
@@ -17,18 +19,12 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "\rScanlines remaining: %d ", image_height - j);
         fflush(stderr);  // make sure it prints immediately
         for(i = 0; i < image_width; i++){
-            r = (double) i / (image_width-1);
-            g = (double) j / (image_height-1);
-            b = 0.0;
 
-            int ir = (int)255.999 * r;
-            int ig = (int)255.999 * g;
-            int ib = (int)255.999 * b;
+            color pixel_color = {(double) i / (image_width-1),
+                                 (double) j / (image_height-1),
+                                 0.0};
 
-            fprintf(f, "%d %d %d\n",
-                (unsigned char) (ir),
-                (unsigned char) (ig),
-                (unsigned char) (ib));
+            write_color(f, pixel_color);
         }
     }
     fprintf(stderr, "\rDone.                 \n");
