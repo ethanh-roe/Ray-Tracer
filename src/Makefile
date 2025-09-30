@@ -1,10 +1,10 @@
 # Default rule to build the target
-all: barycentric
+all: ray-tracer
 
 # Link object files to create the executable
-barycentric: barycentric.c
-	gcc -o barycentric barycentric.c
+ray-tracer: main.c
+	gcc -o ray-tracer main.c
 
 # Clean up build files
 clean:
-	rm -f barycentric barycentric.ppm
+	rm -f ray-tracer *.ppm
