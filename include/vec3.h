@@ -14,6 +14,7 @@ class vec3{
       double& operator[](int i) {return e[i]; }
 };
 
+// for clarity, refer to this class as point3
 using point3 = vec3;
 
 // Utility Functions
