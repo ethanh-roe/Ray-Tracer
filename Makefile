@@ -20,7 +20,7 @@ CC = gcc
 TARGET = ray-tracer
 
 # Source files
-srcs = src/*.c
+srcs = src/*.cc
 
 # Dependency files
 deps = include/*.h
