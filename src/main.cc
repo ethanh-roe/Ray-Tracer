@@ -22,14 +22,11 @@ int main(int argc, char *argv[]){
         fflush(stderr);  // make sure it prints immediately
         for(i = 0; i < image_width; i++){
 
-            // color pixel_color = {(double) i / (image_width-1),
-            //                      (double) j / (image_height-1),
-            //                      0.0};
-
-            color pixel_color;
-            pixel_color.r = (double) i / (image_width-1);
-            pixel_color.g = (double) j / (image_height-1);
-            pixel_color.b = 0.0;
+            color pixel_color = {
+                (double) i / (image_width-1),
+                (double) j / (image_height-1),
+                0.0
+            };
 
             write_color(f, pixel_color);
         }
