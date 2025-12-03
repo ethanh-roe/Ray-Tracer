@@ -11,7 +11,7 @@
 
 
 # Compiler
-CC = gcc
+CC = g++
 
 # Compiler flags
 # CFLAGS = 
