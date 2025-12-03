@@ -71,19 +71,7 @@ int main(int argc, char *argv[]){
             auto ray_direction = pixel_center - camera_center;
             ray r(camera_center, ray_direction);
 
-            if(ALIASING == 1){
-                for(int s = 0; s < SAMPLES_PER_PIXEL; s++){
-
-                }
-            }
-
             color pixel_color = ray_color(r);
-            // color pixel_color = {
-            //     (double) i / (image_width-1),
-            //     (double) j / (image_height-1),
-            //     0.0
-            // };
-
             write_color(f, pixel_color);
         }
     }
