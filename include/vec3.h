@@ -1,5 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
+#include <ostream>
+#include <cmath>
 class vec3{
    public:
       double e[3];
@@ -12,6 +14,14 @@ class vec3{
 
       double operator[](int i) const {return e[i]; }
       double& operator[](int i) {return e[i]; }
+
+      double length() const {
+         return std::sqrt(length_squared());
+      }
+
+      double length_squared() const {
+        return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+    }
 };
 
 // for clarity, refer to this class as point3
@@ -57,5 +67,9 @@ inline vec3 cross(vec3 v, vec3 w){
    v[2] * w[0] - v[0] * w[2], 
    v[0] * w[1] - v[1] * w[0]
    );
+}
+
+inline vec3 unit_vector(const vec3& v) {
+    return v / v.length();
 }
  #endif
