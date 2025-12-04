@@ -1,1 +1,1 @@
-make && ./ray-tracer && display test_image.ppm
+make && ./ray-tracer && convert test_image.ppm test_image.png && display test_image.ppm
