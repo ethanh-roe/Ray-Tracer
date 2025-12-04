@@ -34,4 +34,4 @@ $(TARGET): $(srcs) $(deps)
 
 # Clean up build files
 clean:
-	rm -f $(OBJS) $(TARGET) *.ppm
+	rm -f $(OBJS) $(TARGET) *.ppm *.png
