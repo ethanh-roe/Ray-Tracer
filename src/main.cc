@@ -9,8 +9,6 @@
 
 #define ALIASING 0
 
-#define SAMPLES_PER_PIXEL 4
-
 int main(int argc, char *argv[]){
 
     // World
@@ -23,7 +21,7 @@ int main(int argc, char *argv[]){
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width  = 400;
-    
+
     cam.render(world);
     return 0;
 }
