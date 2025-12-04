@@ -2,7 +2,7 @@
 #define COMMON_CONSTS_H
 
 #include <cmath>
-#include <cstdlib>
+#include <random>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -20,7 +20,9 @@ inline double degrees_to_radians(double degrees){
 
 inline double random_double(){
     // Returns a random real in [0,1)
-    return rand() / (RAND_MAX + 1.0);
+    static uniform_real_distribution<double> distribution(0.0, 1.0);
+    static mt19937 generator;
+    return distribution(generator);
 }
 
 inline double random_double(double min, double max){
