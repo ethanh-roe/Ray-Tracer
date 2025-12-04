@@ -15,7 +15,7 @@ class vec3{
       double operator[](int i) const {return e[i]; }
       double& operator[](int i) {return e[i]; }
 
-          vec3& operator+=(const vec3& v) {
+      vec3& operator+=(const vec3& v) {
         e[0] += v.e[0];
         e[1] += v.e[1];
         e[2] += v.e[2];
@@ -97,5 +97,15 @@ inline vec3 cross(vec3 v, vec3 w){
 
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+inline vec3 random_unit_vector(){
+    while(true){
+        auto p = vec3::random(-1,1);
+        auto lensq = p.length_squared();
+        if(lensq <= 1){
+            return p / sqrt(lensq);
+        }
+    }
 }
  #endif
