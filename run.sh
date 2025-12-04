@@ -1,0 +1,1 @@
+make && ./ray-tracer && display test_image.ppm
