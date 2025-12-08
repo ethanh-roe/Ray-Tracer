@@ -14,7 +14,7 @@
 CC = g++
 
 # Compiler flags
-# CFLAGS = 
+CFLAGS = -O3 -march=native -ffast-math -funroll-loops 
 
 # Target executable
 TARGET = ray-tracer
@@ -30,7 +30,7 @@ all: $(TARGET)
 
 # Link object files to create executable
 $(TARGET): $(srcs) $(deps)
-	$(CC) -o $(TARGET) $(srcs)
+	$(CC) $(CFLAGS) -o $(TARGET) $(srcs)
 
 # Clean up build files
 clean:
