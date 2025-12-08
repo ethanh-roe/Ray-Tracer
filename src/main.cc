@@ -83,7 +83,11 @@ void test_scene(){
     world.add(make_shared<sphere>(point3( 0.0,    0.0, -1.2),   0.5, material_center));
     world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
     world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.4, material_bubble));
-    world.add(make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
+
+    // Moving sphere
+    point3 center(0.9*random_double(), 0.2, 0.9*random_double());
+    auto center2 = center + vec3(0, random_double(0, 0.5), 0);
+    world.add(make_shared<sphere>(center, center2, 0.2, material_right));
     
 
     camera cam;
@@ -94,12 +98,12 @@ void test_scene(){
     cam.max_depth           = 50;
 
     cam.vfov     = 20;
-    cam.lookfrom = point3(-2, 2, 1);
+    cam.lookfrom = point3(0, 1, 5);
     cam.lookat   = point3(0, 0, -1);
     cam.vup      = vec3(0, 1, 0);
     
-    cam.defocus_angle = 10.0;
-    cam.focus_dist = 3.4;
+    cam.defocus_angle = 0.0;
+    cam.focus_dist = 1.5;
 
     cam.render(world);
 }
