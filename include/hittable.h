@@ -2,6 +2,7 @@
 #define HITTABLE_H
 
 #include "common_consts.h"
+#include "aabb.h"
 
 // Tell compiler material is a class that will be defined later
 class material;
@@ -25,6 +26,8 @@ class hittable {
     virtual ~hittable() = default;
 
     virtual bool hit(const ray& r, interval ray_T, hit_record& rec) const = 0;
+
+    virtual aabb bounding_box() const = 0;
 };
 
 #endif
