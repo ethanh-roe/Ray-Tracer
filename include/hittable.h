@@ -3,10 +3,14 @@
 
 #include "common_consts.h"
 
+// Tell compiler material is a class that will be defined later
+class material;
+
 class hit_record {
     public:
     point3 p;
     vec3 normal;
+    shared_ptr<material> mat;
     double t;
     bool front_face;
 
