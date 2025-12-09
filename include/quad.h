@@ -8,8 +8,9 @@ class quad : public hittable {
         quad(const point3& Q, const vec3& u, const vec3& v, shared_ptr<material> mat)
             : Q(Q), u(u), v(v), mat(mat) {
                 auto n = cross(u, v);
-                normal  unit_vector(n);
+                normal = unit_vector(n);
                 D = dot(normal, Q);
+                w = n / dot(n, n);
 
                 set_bounding_box();
             }
@@ -34,7 +35,13 @@ class quad : public hittable {
             auto t = (D - dot(normal, r.origin())) / denom;
             if(!ray_t.contains(t)) return false;
 
+            // Determine if the hit point lies within the plane shape using its coords
             auto intersection = r.at(t);
+            vec3 planar_hitpt_vector = intersection - Q;
+            auto alpha = dot(w, cross(planar_hitpt_vector, v));
+            auto beta = dot(w, cross(u, planar_hitpt_vector));
+
+            if(!is_interior(alpha, beta, rec)) return false;
 
             rec.t = t;
             rec.p = intersection;
@@ -43,10 +50,21 @@ class quad : public hittable {
 
             return true;
         }
+
+        virtual bool is_interior(double a, double b, hit_record& rec) const {
+            interval unit_interval = interval(0, 1);
+
+            if (!unit_interval.contains(a) || !unit_interval.contains(b)) return false;
+
+            rec.u = a;
+            rec.v = b;
+            return true;
+        }
     
     private:
         point3 Q;
         vec3 u, v;
+        vec3 w;
         shared_ptr<material> mat;
         aabb bbox;
         vec3 normal;
