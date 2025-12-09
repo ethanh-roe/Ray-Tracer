@@ -3,7 +3,7 @@
 
 #include "color.h"
 
-class texture{
+class texture {
     public:
         virtual ~texture() = default;
 

@@ -15,22 +15,22 @@ class hittable_list : public hittable {
             add(object);
         }
 
-        void clear(){
+        void clear() {
             objects.clear();
         }
 
-        void add(shared_ptr<hittable> object){
+        void add(shared_ptr<hittable> object) {
             objects.push_back(object);
             bbox = aabb(bbox, object->bounding_box());
         }
 
-        bool hit(const ray& r, interval ray_t, hit_record& rec) const override{
+        bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
             hit_record temp_rec;
             bool hit= false;
             auto closest = ray_t.max;
 
-            for(const auto& object : objects){
-                if (object->hit(r, interval(ray_t.min, closest), temp_rec)){
+            for(const auto& object : objects) {
+                if (object->hit(r, interval(ray_t.min, closest), temp_rec)) {
                     hit = true;
                     closest = temp_rec.t;
                     rec = temp_rec;

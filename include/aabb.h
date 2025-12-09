@@ -5,7 +5,7 @@
 
 //aabb is short for Axis-Aligned Bounding Boxes
 
-class aabb{
+class aabb {
     public:
         interval x, y, z;
 
@@ -23,19 +23,19 @@ class aabb{
             z = (a[2] <= b[2]) ? interval(a[2], b[2]) : interval(b[2], a[2]);
         }
 
-        aabb(const aabb& box0, const aabb& box1){
+        aabb(const aabb& box0, const aabb& box1) {
             x = interval(box0.x, box1.x);
             y = interval(box0.y, box1.y);
             z = interval(box0.z, box1.z);
         }
 
-        const interval& axis_interval(int n) const{
+        const interval& axis_interval(int n) const {
             if(n == 1) return y;
             if(n == 2) return z;
             return x;
         }
 
-        bool hit(const ray& r, interval ray_t) const{
+        bool hit(const ray& r, interval ray_t) const {
             const point3& ray_orig = r.origin();
             const vec3&   ray_dir  = r.direction();
 
@@ -59,7 +59,7 @@ class aabb{
             return true;
         }
 
-        int longest_axis() const{
+        int longest_axis() const {
             // Returns the index of the longest axis of the bounding box
 
             if(x.size() > y.size()){

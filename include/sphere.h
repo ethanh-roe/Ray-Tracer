@@ -30,7 +30,7 @@ class sphere : public hittable {
             auto c = oc.length_squared() - radius * radius;
             auto discriminant = h * h - a * c;
     
-            if (discriminant < 0){
+            if (discriminant < 0) {
                 return false;
             }
     
@@ -38,7 +38,7 @@ class sphere : public hittable {
 
             // Find the nearest root that lies in the acceptable range.
             auto root = (h - sqrtd) / a;
-            if (!ray_t.surrounds(root)){
+            if (!ray_t.surrounds(root)) {
                 root = (h + sqrtd) / a;
                 if(!ray_t.surrounds(root)) return false;
             }

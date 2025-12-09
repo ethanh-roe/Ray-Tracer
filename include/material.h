@@ -3,7 +3,7 @@
 
 #include "hittable.h"
 
-class material{
+class material {
     public:
     virtual ~material() = default;
 
@@ -52,11 +52,11 @@ class metal : public material {
         double fuzz;
 };
 
-class dielectric : public material{
+class dielectric : public material {
     public:
-        dielectric(double refraction_index) : refraction_index(refraction_index){}
+        dielectric(double refraction_index) : refraction_index(refraction_index) {}
 
-        bool scatter(const ray& ray_in, const hit_record& rec, color& attenuation, ray& scattered) const override{
+        bool scatter(const ray& ray_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
             attenuation = color(1.0, 1.0, 1.0);
             double ri = rec.front_face ? (1.0 / refraction_index) : refraction_index;
 
@@ -68,9 +68,9 @@ class dielectric : public material{
             bool cannot_refract = ri * sin_theta > 1.0;
             vec3 direction;
 
-            if(cannot_refract || reflectance(cos_theta, ri) > random_double()){
+            if(cannot_refract || reflectance(cos_theta, ri) > random_double()) {
                 direction = reflect(unit_direction, rec.normal);
-            } else{
+            } else {
                 direction = refract(unit_direction, rec.normal, ri);
             }
 
@@ -83,7 +83,7 @@ class dielectric : public material{
         // refractive index of the refractive index of the enclosing media
         double refraction_index;
 
-        static double reflectance(double cosine, double refraction_index){
+        static double reflectance(double cosine, double refraction_index) {
             // Use Schlick's approximation for reflectance
             
             auto r0 = (1 - refraction_index) / (1 + refraction_index);

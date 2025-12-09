@@ -5,27 +5,27 @@
 
 class ray{
     public:
-    ray() {}
+        ray() {}
     
-    ray(const point3& origin, const vec3& direction, double time) 
-        : orig(origin), dir(direction), tm(time) {}
+        ray(const point3& origin, const vec3& direction, double time) 
+            : orig(origin), dir(direction), tm(time) {}
 
-    ray(const point3& origin, const vec3& direction) 
-        : ray(origin, direction, 0) {}
+        ray(const point3& origin, const vec3& direction) 
+            : ray(origin, direction, 0) {}
 
-    const point3& origin() const { return orig; }
-    const point3& direction() const { return dir; }
+        const point3& origin() const { return orig; }
+        const point3& direction() const { return dir; }
 
-    double time() const { return tm; }
+        double time() const { return tm; }
 
-    point3 at(double t) const {
-        return orig + t*dir;
-    }
+        point3 at(double t) const {
+            return orig + t*dir;
+        }
 
     private:
-    point3 orig;
-    point3 dir;
-    double tm;
+        point3 orig;
+        point3 dir;
+        double tm;
 };
 
 #endif

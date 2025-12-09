@@ -7,56 +7,56 @@
 class camera {
     public:
 
-    // Default values
-    double aspect_ratio     = 1.0;      // Ratio of image width over height
-    int image_width         = 100;      // Rendered image width in pixels
-    int samples_per_pixel   = 10;       // Number of random samples per pixel
-    int max_depth           = 10;       // Maximum number of ray bounces into scene
+        // Default values
+        double aspect_ratio     = 1.0;      // Ratio of image width over height
+        int image_width         = 100;      // Rendered image width in pixels
+        int samples_per_pixel   = 10;       // Number of random samples per pixel
+        int max_depth           = 10;       // Maximum number of ray bounces into scene
 
-    double vfov     = 90;               // Vertical field of view
-    point3 lookfrom = point3(0, 0, 0);  // Point camera is looking from
-    point3 lookat   = point3(0, 0, -1); // Point camera is looking at
-    vec3   vup      = vec3(0, 1, 0);    // "Up" direction relative to camera
+        double vfov     = 90;               // Vertical field of view
+        point3 lookfrom = point3(0, 0, 0);  // Point camera is looking from
+        point3 lookat   = point3(0, 0, -1); // Point camera is looking at
+        vec3   vup      = vec3(0, 1, 0);    // "Up" direction relative to camera
 
-    double defocus_angle = 0; // Variation angle of rays through each pixel
-    double focus_dist = 10;   // Distance from camera lookfrom point to plane of perfect focus
+        double defocus_angle = 0; // Variation angle of rays through each pixel
+        double focus_dist = 10;   // Distance from camera lookfrom point to plane of perfect focus
 
-    void render(const hittable& world){
-        initialize();
+        void render(const hittable& world) {
+            initialize();
 
-        // Render
-        f = fopen("test_image.ppm", "w");
-        fprintf(f, "P3\n%d %d\n255\n", image_width, image_height);
-        for(int j = 0; j < image_height; j++){
-            fprintf(stderr, "\rScanlines remaining: %d ", image_height - j);
-            fflush(stderr);  // make sure it prints immediately
-            for(int i = 0; i < image_width; i++){
-                color pixel_color(0,0,0);
-                for(int sample = 0; sample < samples_per_pixel; sample++){
-                    ray r = get_ray(i,j);
-                    pixel_color += ray_color(r, max_depth, world);
+            // Render
+            f = fopen("test_image.ppm", "w");
+            fprintf(f, "P3\n%d %d\n255\n", image_width, image_height);
+            for(int j = 0; j < image_height; j++) {
+                fprintf(stderr, "\rScanlines remaining: %d ", image_height - j);
+                fflush(stderr);  // make sure it prints immediately
+                for(int i = 0; i < image_width; i++) {
+                    color pixel_color(0,0,0);
+                    for(int sample = 0; sample < samples_per_pixel; sample++) {
+                        ray r = get_ray(i,j);
+                        pixel_color += ray_color(r, max_depth, world);
+                    }
+                    write_color(f, pixel_samples_scale * pixel_color);
                 }
-                write_color(f, pixel_samples_scale * pixel_color);
             }
+            fprintf(stderr, "\rDone.                 \n");
+            fclose(f);
         }
-        fprintf(stderr, "\rDone.                 \n");
-        fclose(f);
-    }
 
     private:
-    FILE *f;                    // Output file
-    int image_height;           // Rendered image height
-    double pixel_samples_scale; // Color scale factor for a sum of pixel samples
-    point3 center;              // Camera center
-    point3 pixel00_loc;         // Location of pixel 0,0
-    vec3 pixel_delta_u;         // Offset to pixel to the right
-    vec3 pixel_delta_v;         // Offset to pixel below
-    vec3 u, v, w;               // Camera frame basis vectors
-    vec3 defocus_disk_u;        // Defocus disk horizontal radius
-    vec3 defocus_disk_v;        // Defocus disk vertical radius
+        FILE *f;                    // Output file
+        int image_height;           // Rendered image height
+        double pixel_samples_scale; // Color scale factor for a sum of pixel samples
+        point3 center;              // Camera center
+        point3 pixel00_loc;         // Location of pixel 0,0
+        vec3 pixel_delta_u;         // Offset to pixel to the right
+        vec3 pixel_delta_v;         // Offset to pixel below
+        vec3 u, v, w;               // Camera frame basis vectors
+        vec3 defocus_disk_u;        // Defocus disk horizontal radius
+        vec3 defocus_disk_v;        // Defocus disk vertical radius
 
 
-    void initialize(){
+    void initialize() {
         // Calculate the image height
         image_height = int(image_width / aspect_ratio);
         // Ensure it is atleast 1
@@ -96,7 +96,7 @@ class camera {
         defocus_disk_v = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const{
+    ray get_ray(int i, int j) const {
         // Construct a camera ray originating from the defocus disk and directed at
         // a randomly sampled point around the pixel location i,j
 
@@ -110,28 +110,28 @@ class camera {
         return ray(ray_origin, ray_direction, ray_time);
     }
 
-    vec3 sample_square() const{
+    vec3 sample_square() const {
         // Returns the vector to a random point in the [-.5, -.5] - [+.5, +.5] unit square
         return vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
-    point3 defocus_disk_sample() const{
+    point3 defocus_disk_sample() const {
         // Returns a random point in the camera defocus disk.
         auto p = random_in_unit_disk();
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    color ray_color(const ray& r, int depth, const hittable& world){
-        if(depth <= 0){
+    color ray_color(const ray& r, int depth, const hittable& world) {
+        if(depth <= 0) {
             return color(0,0,0);
         }
 
         hit_record rec;
 
-        if(world.hit(r, interval(0.001, infinity), rec)){
+        if(world.hit(r, interval(0.001, infinity), rec)) {
             ray scattered;
             color attenuation;
-            if(rec.mat->scatter(r, rec, attenuation, scattered)){
+            if(rec.mat->scatter(r, rec, attenuation, scattered)) {
                 return attenuation * ray_color(scattered, depth-1, world);
             }
             return color(0,0,0);

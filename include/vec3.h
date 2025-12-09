@@ -90,11 +90,11 @@ inline vec3 operator/(const vec3& v, double t) {
     return (1/t) * v;
 }
 
-inline double dot(vec3 v, vec3 w){
+inline double dot(vec3 v, vec3 w) {
    return v[0] * w[0] + v[1] * w[1] + v[2] * w[2];
 }
 
-inline vec3 cross(vec3 v, vec3 w){
+inline vec3 cross(vec3 v, vec3 w) {
    return vec3(
    v[1] * w[2] - v[2] * w[1],  
    v[2] * w[0] - v[0] * w[2], 
@@ -106,7 +106,7 @@ inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
 }
 
-inline vec3 random_in_unit_disk(){
+inline vec3 random_in_unit_disk() {
     while(true){
         auto p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
         if(p.length_squared() < 1){
@@ -115,7 +115,7 @@ inline vec3 random_in_unit_disk(){
     }
 }
 
-inline vec3 random_unit_vector(){
+inline vec3 random_unit_vector() {
     while(true){
         auto p = vec3::random(-1,1);
         auto lensq = p.length_squared();
@@ -125,7 +125,7 @@ inline vec3 random_unit_vector(){
     }
 }
 
-inline vec3 random_on_hemisphere(const vec3& normal){
+inline vec3 random_on_hemisphere(const vec3& normal) {
     vec3 on_unit_sphere = random_unit_vector();
     // If in the same hemisphere as the normal
     if(dot(on_unit_sphere, normal) > 0.0){
@@ -135,11 +135,11 @@ inline vec3 random_on_hemisphere(const vec3& normal){
     }
 }
 
-inline vec3 reflect(const vec3& v, const vec3& n){
+inline vec3 reflect(const vec3& v, const vec3& n) {
     return v - 2 * dot(v,n) * n;
 }
 
-inline vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat){
+inline vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
     auto cos_theta = fmin(dot(-uv, n), 1.0);
     vec3 ray_out_perp = etai_over_etat * (uv + cos_theta * n);
     vec3 ray_out_parallel = -sqrt(fabs(1.0 - ray_out_perp.length_squared())) * n;

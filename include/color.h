@@ -5,14 +5,14 @@
 
 using color = vec3;
 
-inline double linear_to_gamma(double linear_component){
-    if(linear_component > 0){
+inline double linear_to_gamma(double linear_component) {
+    if(linear_component > 0) {
         return sqrt(linear_component);
     }
     return 0;
 }
 
-void write_color(FILE *f, const color& pixel_color){
+void write_color(FILE *f, const color& pixel_color) {
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();
