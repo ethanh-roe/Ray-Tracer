@@ -9,7 +9,9 @@
 #include "../include/texture.h"
 #include "../include/quad.h"
 
-#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 void bouncing_spheres(){
     hittable_list world;
@@ -296,15 +298,70 @@ void cornell_box() {
 }
 
 int main(int argc, char *argv[]){
-    switch (8) {
-        case 1: bouncing_spheres();     break;
-        case 2: checkered_spheres();    break;
-        case 3: test_scene1();          break;
-        case 4: earth();                break;
-        case 5: perlin_spheres();       break;
-        case 6: quads();                break;
-        case 7: simple_light();         break;
-        case 8: cornell_box();          break;
+    int selected_scene = 7; // Default scene is 8 (cornell box).
+    string input;
+
+    cout << "(0) Bouncing Spheres"          << endl;
+    cout << "(1) Checkered Spheres"         << endl;
+    cout << "(2) Test"                      << endl;
+    cout << "(3) Earth"                     << endl;
+    cout << "(4) Perlin Noise Spheres"      << endl;
+    cout << "(5) Quads"                     << endl;
+    cout << "(6) Simple Light"              << endl;
+    cout << "(7) Cornell Box <-- Default"   << endl;
+
+    cout << "Select a scene: ";
+    
+    getline(cin, input);
+
+    if(!input.empty()) {
+        stringstream stream(input);
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 7){
+            cout << "Invalid input. Using default scene" << endl;
+            selected_scene = 7;
+        }
+    }
+    
+    switch (selected_scene) {
+        case 0: 
+        bouncing_spheres();
+        cout << "Rending Bouncing Spheres Scene" << endl;
+        break;
+
+        case 1: 
+        checkered_spheres();
+        cout << "Rending Checkered Spheres Scene" << endl;
+        break;
+
+        case 2: 
+        test_scene1();
+        cout << "Rending Test Scene" << endl;
+        break;
+
+        case 3: 
+        earth();
+        cout << "Rending Earth Scene" << endl;
+        break;
+
+        case 4: 
+        perlin_spheres();
+        cout << "Rending Perlin Noise Spheres Scene" << endl;
+        break;
+
+        case 5: 
+        quads();
+        cout << "Rending Quads Scene" << endl;
+        break;
+
+        case 6: 
+        simple_light();
+        cout << "Rending Simple Light Scene" << endl;
+        break;
+
+        case 7: 
+        cornell_box();
+        cout << "Rendering Cornell Box Scene" << endl;
+        break;
     }
     return 0;
 }
