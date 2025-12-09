@@ -193,7 +193,7 @@ int main(int argc, char *argv[]){
         case 2: checkered_spheres();    break;
         case 3: test_scene1();          break;
         case 4: earth();                break;
-        case 5 : perlin_spheres();      break;
+        case 5: perlin_spheres();       break;
     }
     return 0;
 }
