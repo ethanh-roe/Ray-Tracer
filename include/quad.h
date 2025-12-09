@@ -2,6 +2,7 @@
 #define QUAD_H
 
 #include "hittable.h"
+#include "hittable_list.h"
 
 class quad : public hittable {
     public:
@@ -70,5 +71,29 @@ class quad : public hittable {
         vec3 normal;
         double D;
 };
+
+inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat) {
+    // Returns a 3D box, with 6 sides, that contains the two opposite vertices, a and b.
+
+    auto sides = make_shared<hittable_list>();
+
+    // Construct the two opposite vertices with the min / max coords
+
+    auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
+    auto max = point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
+
+    auto dx = vec3(max.x() - min.x(), 0, 0);
+    auto dy = vec3(max.y() - min.y(), 0, 0);
+    auto dz = vec3(max.z() - min.z(), 0, 0);
+
+    sides->add(make_shared<quad>(point3(min.x(), min.y(), max.z()),  dx,  dy, mat)); // FRONT
+    sides->add(make_shared<quad>(point3(max.x(), min.y(), max.z()), -dz,  dy, mat)); // RIGHT
+    sides->add(make_shared<quad>(point3(max.x(), min.y(), min.z()), -dx,  dy, mat)); // BACK
+    sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()),  dz,  dy, mat)); // LEFT
+    sides->add(make_shared<quad>(point3(min.x(), max.y(), max.z()),  dx, -dz, mat)); // TOP
+    sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()),  dx,  dz, mat)); // BOTTOM
+
+    return sides;
+}
 
 #endif
