@@ -1,5 +1,6 @@
 #include "../include/common_consts.h"
 
+#include "../include/bvh.h"
 #include "../include/camera.h"
 #include "../include/hittable.h"
 #include "../include/hittable_list.h"
@@ -52,11 +53,11 @@ void fancy_scene(){
     auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
+    world = hittable_list(make_shared<bvh_node>(world));
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    // cam.image_width       = 1200;
-    // cam.samples_per_pixel = 500;
     cam.image_width       = 400;
     cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
@@ -72,7 +73,7 @@ void fancy_scene(){
     cam.render(world);
 }
 
-void test_scene(){
+void test_scene1(){
     // World
     hittable_list world;
 
@@ -112,6 +113,6 @@ void test_scene(){
 }
 
 int main(int argc, char *argv[]){
-    test_scene();
+    fancy_scene();
     return 0;
 }
