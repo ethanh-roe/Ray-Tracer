@@ -57,6 +57,6 @@ class translate : public hittable {
         shared_ptr<hittable> object;
         vec3 offset;
         aabb bbox;
-}
+};
 
 #endif
