@@ -84,6 +84,6 @@ class noise_texture : public texture {
 
     private:
         perlin noise;
-}
+};
 
 #endif
