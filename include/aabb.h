@@ -38,7 +38,7 @@ class aabb{
             const vec3&   ray_dir  = r.direction();
 
             for(int axis = 0; axis < 3; axis++){
-                const interval& ax = axis_inteval(axis);
+                const interval& ax = axis_interval(axis);
                 const double adinv = 1.0 / ray_dir[axis];
 
                 auto t0 = (ax.min - ray_orig[axis]) * adinv;
