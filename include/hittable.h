@@ -61,7 +61,7 @@ class translate : public hittable {
 
 class rotate_y : public hittable {
     public:
-        rotate_y(shared_ptr<hittable> objectr, double angle) : object(object) {
+        rotate_y(shared_ptr<hittable> object, double angle) : object(object) {
             auto radians = degrees_to_radians(angle);
             sin_theta = sin(radians);
             cos_theta = cos(radians);
