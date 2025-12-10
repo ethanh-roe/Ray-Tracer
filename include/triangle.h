@@ -6,8 +6,8 @@
 
 class triangle : public hittable {
     public:
-        triangle(const point3& a, const point3& b, const point3& c, shared_ptr<material> m) 
-            : A(a), B(b), C(c), mat(m) {
+        triangle(const point3& A, const point3& B, const point3& C, shared_ptr<material> mat) 
+            : A(A), B(B), C(C), mat(mat) {
 
                 auto n = cross(B - A, C - A);
                 normal = unit_vector(n);
