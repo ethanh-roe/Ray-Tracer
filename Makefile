@@ -14,7 +14,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -O3 -march=native -ffast-math -funroll-loops 
+CFLAGS = -O3 -fopenmp -std=c++11 -march=native -ffast-math -funroll-loops 
 
 # Target executable
 TARGET = ray-tracer
