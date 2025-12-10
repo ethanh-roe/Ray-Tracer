@@ -9,6 +9,7 @@
 #include "../include/quad.h"
 #include "../include/sphere.h"
 #include "../include/texture.h"
+#include "../include/triangle.h"
 
 #include <iostream>
 #include <string>
@@ -428,20 +429,64 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     cam.render(world);
 }
 
+void triangle_scene() {
+    hittable_list world;
+
+// Materials
+auto red   = make_shared<lambertian>(color(0.65, 0.05, 0.05));
+auto green = make_shared<lambertian>(color(0.12, 0.45, 0.15));
+auto blue  = make_shared<lambertian>(color(0.05, 0.05, 0.65));
+
+// Ground plane (checker texture for contrast)
+auto checker = make_shared<checker_texture>(0.32, color(.2, .3, .1), color(.9, .9, .9));
+world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
+
+// Triangles forming a simple pyramid-like shape
+point3 A(-1, 0, -1);
+point3 B( 1, 0, -1);
+point3 C( 0, 0,  1);
+point3 D( 0, 1.5, 0); // apex
+
+world.add(make_shared<triangle>(A, B, C, green));
+
+world.add(make_shared<triangle>(A, B, D, red));
+world.add(make_shared<triangle>(B, C, D, blue));
+world.add(make_shared<triangle>(C, A, D, red));
+
+camera cam;
+
+cam.aspect_ratio      = 16.0 / 9.0;
+cam.image_width       = 400;
+cam.samples_per_pixel = 100;
+cam.max_depth         = 50;
+cam.background        = color(0.70, 0.80, 1.00);
+
+cam.vfov     = 40;
+cam.lookfrom = point3(3,2,6);
+cam.lookat   = point3(0,0.5,0);
+cam.vup      = vec3(0,1,0);
+
+cam.defocus_angle = 0;
+
+// Render
+cam.render(world);
+}
+
 int main(int argc, char *argv[]){
     int selected_scene = 0; // Default scene is 8 (cornell box).
     string input;
 
-    cout << "(0) Bouncing Spheres <-- Default"  << endl;
-    cout << "(1) Checkered Spheres"             << endl;
-    cout << "(2) Test"                          << endl;
-    cout << "(3) Earth"                         << endl;
-    cout << "(4) Perlin Noise Spheres"          << endl;
-    cout << "(5) Quads"                         << endl;
-    cout << "(6) Simple Light"                  << endl;
-    cout << "(7) Cornell Box"                   << endl;
-    cout << "(8) Cornell Box with Smoke Scene"  << endl;
-    cout << "(9) Final Scene"                   << endl;
+    cout << "(0)  Bouncing Spheres <-- Default" << endl;
+    cout << "(1)  Checkered Spheres"            << endl;
+    cout << "(2)  Test"                         << endl;
+    cout << "(3)  Earth"                        << endl;
+    cout << "(4)  Perlin Noise Spheres"         << endl;
+    cout << "(5)  Quads"                        << endl;
+    cout << "(6)  Simple Light"                 << endl;
+    cout << "(7)  Cornell Box"                  << endl;
+    cout << "(8)  Cornell Box with Smoke Scene" << endl;
+    cout << "(9)  Final Scene"                  << endl;
+    cout << "(10) Triangle Scene"               << endl;
 
     cout << "Select a scene: ";
     
@@ -449,7 +494,7 @@ int main(int argc, char *argv[]){
 
     if(!input.empty()) {
         stringstream stream(input);
-        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 9){
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 10){
             cout << "Invalid input. Using default scene" << endl;
             selected_scene = 7;
         }
@@ -457,53 +502,58 @@ int main(int argc, char *argv[]){
     
     switch (selected_scene) {
         case 0: 
-        bouncing_spheres();
         cout << "Rending Bouncing Spheres Scene" << endl;
+        bouncing_spheres();
         break;
 
         case 1: 
-        checkered_spheres();
         cout << "Rending Checkered Spheres Scene" << endl;
+        checkered_spheres();
         break;
 
         case 2: 
-        test_scene1();
         cout << "Rending Test Scene" << endl;
+        test_scene1();
         break;
 
         case 3: 
-        earth();
         cout << "Rending Earth Scene" << endl;
+        earth();
         break;
 
         case 4: 
-        perlin_spheres();
         cout << "Rending Perlin Noise Spheres Scene" << endl;
+        perlin_spheres();
         break;
 
         case 5: 
-        quads();
         cout << "Rending Quads Scene" << endl;
+        quads();
         break;
 
         case 6: 
-        simple_light();
         cout << "Rending Simple Light Scene" << endl;
+        simple_light();
         break;
 
         case 7: 
-        cornell_box();
         cout << "Rendering Cornell Box Scene" << endl;
+        cornell_box();
         break;
 
         case 8:
-        cornell_smoke();
         cout << "Rendering Cornell Box with Smoke Scene" << endl;
+        cornell_smoke();
         break;
 
         case 9:
-        final_scene(400, 250, 4);
         cout << "Rendering Final Sceen" << endl;
+        final_scene(400, 250, 4);
+        break;
+
+        case 10:
+        cout << "Rendering Triangle Scene" << endl;
+        triangle_scene();
         break;
     }
     return 0;
