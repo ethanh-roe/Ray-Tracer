@@ -9,7 +9,7 @@
 #include "../include/quad.h"
 #include "../include/sphere.h"
 #include "../include/texture.h"
-#include "../include/triangle.h"
+
 
 #include <iostream>
 #include <string>
@@ -198,7 +198,7 @@ void perlin_spheres() {
 }
 
 void quads() {
-     hittable_list world;
+    hittable_list world;
 
     // Materials
     auto left_red     = make_shared<lambertian>(color(1.0, 0.2, 0.2));
@@ -432,36 +432,27 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
 void triangle_scene() {
     hittable_list world;
 
-    auto red   = make_shared<lambertian>(color(0.65, 0.05, 0.05));
-    auto green = make_shared<lambertian>(color(0.12, 0.45, 0.15));
-    auto blue  = make_shared<lambertian>(color(0.05, 0.05, 0.65));
+    // Materials
+    auto red     = make_shared<lambertian>(color(1.0, 0.2, 0.2));
+    auto green   = make_shared<lambertian>(color(0.2, 1.0, 0.2));
+    auto blue    = make_shared<lambertian>(color(0.2, 0.2, 1.0));
 
-    auto checker = make_shared<checker_texture>(0.32, color(.2, .3, .1), color(.9, .9, .9));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
-
-    // Pyramid
-    point3 A(-1, 0, -1);
-    point3 B( 1, 0, -1);
-    point3 C( 0, 0,  1);
-    point3 D( 0, 1.5, 0); // apex
-
-    world.add(make_shared<triangle>(A, B, C, green));
-
-    world.add(make_shared<triangle>(A, B, D, red));
-    world.add(make_shared<triangle>(B, C, D, blue));
-    world.add(make_shared<triangle>(C, A, D, red));
+    // Triangles
+    world.add(make_shared<tri>(point3(-3,-2, 5), vec3(0, 0,-4), vec3(0, 4, 0), red));
+    world.add(make_shared<tri>(point3(-2,-2, 0), vec3(4, 0, 0), vec3(0, 4, 0), green));
+    world.add(make_shared<tri>(point3( 3,-2, 1), vec3(0, 0, 4), vec3(0, 4, 0), blue));
 
     camera cam;
 
-    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.aspect_ratio      = 1.0;
     cam.image_width       = 400;
     cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
-    cam.vfov     = 40;
-    cam.lookfrom = point3(3,2,6);
-    cam.lookat   = point3(0,0.5,0);
+    cam.vfov     = 80;
+    cam.lookfrom = point3(0,0,9);
+    cam.lookat   = point3(0,0,0);
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
