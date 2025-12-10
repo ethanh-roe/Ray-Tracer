@@ -5,7 +5,7 @@
 
 class triangle : public hittable {
     public:
-        triangle(const point3& a, const vec3& b, const vec3& c, shared_ptr<material> mat)
+        triangle(const point3& a, const point3& b, const point3& c, shared_ptr<material> mat)
             : v0(a), v1(b), v2(c), mat(mat) {
                 normal = unit_vector(cross(v1 - v0, v2 - v0));
                 D = dot(normal, v0);
