@@ -6,9 +6,11 @@
 #include "../include/hittable.h"
 #include "../include/hittable_list.h"
 #include "../include/material.h"
+#include "../include/mesh_loader.h"
 #include "../include/quad.h"
 #include "../include/sphere.h"
 #include "../include/texture.h"
+#include "../include/triangle.h"
 
 
 #include <iostream>
@@ -438,9 +440,9 @@ void triangle_scene() {
     auto blue    = make_shared<lambertian>(color(0.2, 0.2, 1.0));
 
     // Triangles
-    world.add(make_shared<tri>(point3(-3,-2, 5), vec3(0, 0,-4), vec3(0, 4, 0), red));
-    world.add(make_shared<tri>(point3(-2,-2, 0), vec3(4, 0, 0), vec3(0, 4, 0), green));
-    world.add(make_shared<tri>(point3( 3,-2, 1), vec3(0, 0, 4), vec3(0, 4, 0), blue));
+    world.add(make_shared<triangle>(point3(-3, -2, 5), point3(-3, -2, 1), point3(-3, 2, 5), red));
+    world.add(make_shared<triangle>(point3(-2, -2, 0), point3( 2, -2, 0), point3(-2, 2, 0), green));
+    world.add(make_shared<triangle>(point3( 3, -2, 1), point3( 3, -2, 5), point3( 3, 2, 1), blue));
 
     camera cam;
 
@@ -482,14 +484,14 @@ void pyramid_scene() {
     point3 apex(0, 2, 0);
 
     // Base triangles
-    world.add(make_shared<tri>(A, B - A, C - A, yellow));
-    world.add(make_shared<tri>(A, C - A, D - A, yellow));
+    world.add(make_shared<triangle>(A, B, C, yellow));
+    world.add(make_shared<triangle>(A, C, D, yellow));
 
     // Triangles
-    world.add(make_shared<tri>(apex, A - apex, B - apex, red));
-    world.add(make_shared<tri>(apex, B - apex, C - apex, green));
-    world.add(make_shared<tri>(apex, C - apex, D - apex, blue));
-    world.add(make_shared<tri>(apex, D - apex, A - apex, orange));
+    world.add(make_shared<triangle>(apex, A, B, red));
+    world.add(make_shared<triangle>(apex, B, C, green));
+    world.add(make_shared<triangle>(apex, C, D, blue));
+    world.add(make_shared<triangle>(apex, D, A, orange));
 
     camera cam;
 
@@ -524,14 +526,14 @@ void perlin_pyramid_scene(){
     point3 apex(0, 2, 0);
 
     // Base triangles
-    world.add(make_shared<tri>(A, B - A, C - A, make_shared<lambertian>(pertext)));
-    world.add(make_shared<tri>(A, C - A, D - A, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(A, B, C, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(A, C, D, make_shared<lambertian>(pertext)));
 
     // Triangles
-    world.add(make_shared<tri>(apex, A - apex, B - apex, make_shared<lambertian>(pertext)));
-    world.add(make_shared<tri>(apex, B - apex, C - apex, make_shared<lambertian>(pertext)));
-    world.add(make_shared<tri>(apex, C - apex, D - apex, make_shared<lambertian>(pertext)));
-    world.add(make_shared<tri>(apex, D - apex, A - apex, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(apex, A, B, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(apex, B, C, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(apex, C, D, make_shared<lambertian>(pertext)));
+    world.add(make_shared<triangle>(apex, D, A, make_shared<lambertian>(pertext)));
 
     camera cam;
 
@@ -547,6 +549,31 @@ void perlin_pyramid_scene(){
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
+
+    cam.render(world);
+}
+
+void stanford_bunny_mesh_scene(){
+    hittable_list world;
+
+    auto red_mat = make_shared<lambertian>(color(1.0,0.2,0.2));
+
+    // Load a mesh
+    auto bunny_mesh = mesh_loader::load_obj("obj/stanford-bunny.obj", red_mat);
+
+    auto bunny_bvh = make_shared<bvh_node>(bunny_mesh->objects, 0, bunny_mesh->objects.size());
+
+    world.add(bunny_bvh);
+
+    camera cam;
+    cam.lookfrom = point3(0.1,0.1,0.5);
+    cam.lookat   = point3(0,0.1,0);
+    cam.vup      = vec3(0,1,0);
+    cam.vfov     = 40;
+    cam.aspect_ratio = 1.0;
+    cam.image_width = 400;
+    cam.samples_per_pixel = 50;
+    cam.background = color(0.7, 0.8, 1.0);
 
     cam.render(world);
 }
@@ -568,6 +595,7 @@ int main(int argc, char *argv[]){
     cout << "(10) Triangle Scene"               << endl;
     cout << "(11) Pyramid Scene"                << endl;
     cout << "(12) Perlin Pyramid Scene"         << endl;
+    cout << "(13) Stanford Bunny Scene"         << endl;
 
     cout << "Select a scene: ";
     
@@ -575,7 +603,7 @@ int main(int argc, char *argv[]){
 
     if(!input.empty()) {
         stringstream stream(input);
-        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 12){
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 13){
             cout << "Invalid input. Using default scene" << endl;
             selected_scene = 7;
         }
@@ -645,6 +673,11 @@ int main(int argc, char *argv[]){
         case 12:
         cout << "Rendering Perlin Pyramid Scene" << endl;
         perlin_pyramid_scene();
+        break;
+
+        case 13:
+        cout << "Rendering Stanford Bunny Scene" << endl;
+        stanford_bunny_mesh_scene();
         break;
     }
     return 0;
