@@ -111,6 +111,6 @@ class tri : public quad {
             rec.v = b;
             return true;
         }
-}
+};
 
 #endif
