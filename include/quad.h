@@ -104,7 +104,7 @@ class tri : public quad {
         tri(const point3& o, const vec3& aa, const vec3& ab, shared_ptr<material> m)
             : quad(o, aa, ab, m) {}
 
-        virtual bool hit_ab(double a, double b, hit_record& rec) const override {
+        virtual bool is_interior(double a, double b, hit_record& rec) const override {
             if((a < 0) || (b < 0) || (a + b > 1)) return false;
 
             rec.u = a;
