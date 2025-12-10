@@ -1,8 +1,11 @@
 #ifndef QUAD_H
 #define QUAD_H
 
+#include "common_consts.h"
 #include "hittable.h"
 #include "hittable_list.h"
+
+#include <cmath>
 
 class quad : public hittable {
     public:
@@ -94,6 +97,20 @@ inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_pt
     sides->add(make_shared<quad>(point3(min.x(), min.y(), min.z()),  dx,  dz, mat)); // BOTTOM
 
     return sides;
+}
+
+class tri : public quad {
+    public:
+        tri(const point3& o, const vec3& aa, const vec3& ab, shared_ptr<material> m)
+            : quad(o, aa, ab, m) {}
+
+        virtual bool hit_ab(double a, double b, hit_record& rec) const override {
+            if((a < 0) || (b < 0) || (a + b > 1)) return false;
+
+            rec.u = a;
+            rec.v = b;
+            return true;
+        }
 }
 
 #endif
