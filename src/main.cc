@@ -469,6 +469,8 @@ void pyramid_scene() {
     auto blue    = make_shared<lambertian>(color(0.2, 0.2, 1.0));
     auto orange  = make_shared<lambertian>(color(1.0, 0.6, 0.2));
     auto yellow  = make_shared<lambertian>(color(1.0, 1.0, 0.2));
+
+    auto pertext = make_shared<noise_texture>(4);
     
     // Square base points
     point3 A(-1, 0, -1);
@@ -507,6 +509,48 @@ void pyramid_scene() {
     cam.render(world);
 }
 
+void perlin_pyramid_scene(){
+    hittable_list world;
+
+    auto pertext = make_shared<noise_texture>(4);
+    
+    // Square base points
+    point3 A(-1, 0, -1);
+    point3 B(1, 0, -1);
+    point3 C(1, 0, 1);
+    point3 D(-1, 0, 1);
+
+    // Pyramid apex
+    point3 apex(0, 2, 0);
+
+    // Base triangles
+    world.add(make_shared<tri>(A, B - A, C - A, make_shared<lambertian>(pertext)));
+    world.add(make_shared<tri>(A, C - A, D - A, make_shared<lambertian>(pertext)));
+
+    // Triangles
+    world.add(make_shared<tri>(apex, A - apex, B - apex, make_shared<lambertian>(pertext)));
+    world.add(make_shared<tri>(apex, B - apex, C - apex, make_shared<lambertian>(pertext)));
+    world.add(make_shared<tri>(apex, C - apex, D - apex, make_shared<lambertian>(pertext)));
+    world.add(make_shared<tri>(apex, D - apex, A - apex, make_shared<lambertian>(pertext)));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+    cam.background        = color(0.70, 0.80, 1.00);
+
+    cam.vfov     = 50;
+    cam.lookfrom = point3(4,-2,4);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world);
+}
+
 int main(int argc, char *argv[]){
     int selected_scene = 0; // Default scene is 8 (cornell box).
     string input;
@@ -523,6 +567,7 @@ int main(int argc, char *argv[]){
     cout << "(9)  Final Scene"                  << endl;
     cout << "(10) Triangle Scene"               << endl;
     cout << "(11) Pyramid Scene"                << endl;
+    cout << "(12) Perlin Pyramid Scene"         << endl;
 
     cout << "Select a scene: ";
     
@@ -530,7 +575,7 @@ int main(int argc, char *argv[]){
 
     if(!input.empty()) {
         stringstream stream(input);
-        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 11){
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 12){
             cout << "Invalid input. Using default scene" << endl;
             selected_scene = 7;
         }
@@ -595,6 +640,11 @@ int main(int argc, char *argv[]){
         case 11:
         cout << "Rendering Pyramid Scene" << endl;
         pyramid_scene();
+        break;
+
+        case 12:
+        cout << "Rendering Perlin Pyramid Scene" << endl;
+        perlin_pyramid_scene();
         break;
     }
     return 0;
