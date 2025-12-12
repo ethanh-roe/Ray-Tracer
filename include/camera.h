@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "hittable.h"
+#include "pdf.h"
 #include "material.h"
 
 #include <omp.h> // For Parallelization
@@ -169,20 +170,9 @@ class camera {
 
         if(!rec.mat->scatter(r, rec, attenuation, scattered, pdf_val)) return color_from_emission;
 
-        auto on_light = point3(random_double(13, 343), 554, random_double(227, 332));
-        auto to_light = on_light - rec.p;
-        auto distance_squared = to_light.length_squared();
-        to_light = unit_vector(to_light);
-
-        if(dot(to_light, rec.normal) < 0) return color_from_emission;
-
-        double light_area = (343 - 213) * (332 - 227);
-        auto light_cos = fabs(to_light.y());
-
-        if(light_cos < 0.000001) return color_from_emission;
-
-        pdf_val = distance_squared / (light_cos * light_area);
-        scattered = ray(rec.p, to_light, r.time());
+        cosine_pdf surface_pdf(rec.normal);
+        scattered = ray(rec.p, surface_pdf.generate(), r.time());
+        pdf_val = surface_pdf.value(scattered.direction());
 
         double scattering_pdf = rec.mat->scattering_pdf(r, rec, scattered);
 
