@@ -73,6 +73,23 @@ class aabb {
             }
         }
 
+        // Following methods are for orienting camera correctly at custom meshes
+        
+        point3 min() const {
+            return point3(x.min, y.min, z.min);
+        }
+
+        point3 max() const {
+            return point3(x.max, y.max, z.max);
+        }
+
+        point3 center() const {
+            return point3((x.min + x.max) * 0.5,
+                          (y.min + y.max) * 0.5,
+                          (z.min + z.max) * 0.5
+                        );
+        }
+
         static const aabb empty, universe;
 
     private:
