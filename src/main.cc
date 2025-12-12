@@ -560,14 +560,49 @@ void stanford_bunny_mesh_scene(){
 
     // Load a mesh
     auto bunny_mesh = mesh_loader::load_obj("obj/stanford-bunny.obj", red_mat);
+    
+    aabb mesh_bounds = bunny_mesh->bounding_box();
+    point3 mesh_center = mesh_bounds.center();
+    vec3 mesh_size = mesh_bounds.max() - mesh_bounds.min();
+    double radius = mesh_size.length() * 0.5;
 
-    auto bunny_bvh = make_shared<bvh_node>(bunny_mesh->objects, 0, bunny_mesh->objects.size());
+    auto mesh_bvh = make_shared<bvh_node>(bunny_mesh->objects, 0, bunny_mesh->objects.size());
 
-    world.add(bunny_bvh);
+    world.add(mesh_bvh);
 
     camera cam;
-    cam.lookfrom = point3(0.1,0.1,0.5);
-    cam.lookat   = point3(0,0.1,0);
+    cam.lookfrom = mesh_center + vec3(0, radius, radius * 3);
+    cam.lookat   = mesh_center;
+    cam.vup      = vec3(0,1,0);
+    cam.vfov     = 40;
+    cam.aspect_ratio = 1.0;
+    cam.image_width = 400;
+    cam.samples_per_pixel = 50;
+    cam.background = color(0.7, 0.8, 1.0);
+
+    cam.render(world);
+}
+
+void armadillo_mesh_scene() {
+    hittable_list world;
+
+    auto red_mat = make_shared<lambertian>(color(1.0,0.2,0.2));
+
+    // Load a mesh
+    auto armadillo_mesh = mesh_loader::load_obj("obj/armadillo.obj", red_mat);
+
+    aabb mesh_bounds = armadillo_mesh->bounding_box();
+    point3 mesh_center = mesh_bounds.center();
+    vec3 mesh_size = mesh_bounds.max() - mesh_bounds.min();
+    double radius = mesh_size.length() * 0.5;
+
+    auto mesh_bvh = make_shared<bvh_node>(armadillo_mesh->objects, 0, armadillo_mesh->objects.size());
+
+    world.add(mesh_bvh);
+
+    camera cam;
+    cam.lookfrom = mesh_center - vec3(0, radius / -2, radius * 2);
+    cam.lookat   = mesh_center;
     cam.vup      = vec3(0,1,0);
     cam.vfov     = 40;
     cam.aspect_ratio = 1.0;
@@ -595,7 +630,8 @@ int main(int argc, char *argv[]){
     cout << "(10) Triangle Scene"               << endl;
     cout << "(11) Pyramid Scene"                << endl;
     cout << "(12) Perlin Pyramid Scene"         << endl;
-    cout << "(13) Stanford Bunny Scene"         << endl;
+    cout << "(13) Stanford Bunny Mesh Scene"    << endl;
+    cout << "(14) Armadillo Mesh Scene"         << endl;
 
     cout << "Select a scene: ";
     
@@ -603,7 +639,7 @@ int main(int argc, char *argv[]){
 
     if(!input.empty()) {
         stringstream stream(input);
-        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 13){
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 14){
             cout << "Invalid input. Using default scene" << endl;
             selected_scene = 7;
         }
@@ -676,8 +712,13 @@ int main(int argc, char *argv[]){
         break;
 
         case 13:
-        cout << "Rendering Stanford Bunny Scene" << endl;
+        cout << "Rendering Stanford Bunny Mesh" << endl;
         stanford_bunny_mesh_scene();
+        break;
+
+        case 14:
+        cout << "Rendering Armadillo Mesh" << endl;
+        armadillo_mesh_scene();
         break;
     }
     return 0;
