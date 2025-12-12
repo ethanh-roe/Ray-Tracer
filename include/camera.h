@@ -37,10 +37,11 @@ class camera {
                 fflush(stderr);  // make sure it prints immediately
                 for(int i = 0; i < image_width; i++){
                     color pixel_color(0, 0, 0);
-                    
-                    for(int sample = 0; sample < samples_per_pixel; sample++){
-                        ray r = get_ray(i, j);
-                        pixel_color += ray_color(r, max_depth, world);
+                    for(int s_j = 0; s_j < sqrt_spp; s_j++){
+                        for(int s_i = 0; s_i < sqrt_spp; s_i++){
+                            ray r = get_ray(i, j, s_i, s_j);
+                            pixel_color += ray_color(r, max_depth, world);
+                        }
                     }
                     framebuffer[j * image_width + i] = pixel_samples_scale * pixel_color;
                 }
@@ -71,7 +72,8 @@ class camera {
         vec3 u, v, w;               // Camera frame basis vectors
         vec3 defocus_disk_u;        // Defocus disk horizontal radius
         vec3 defocus_disk_v;        // Defocus disk vertical radius
-
+        int sqrt_spp;               // Square root of number of samples per pixel
+        double recip_sqrt_spp;      // 1 / sqrt_spp
 
     void initialize() {
         // Calculate the image height
@@ -79,7 +81,9 @@ class camera {
         // Ensure it is atleast 1
         image_height = (image_height < 1) ? 1 : image_height;
 
-        pixel_samples_scale = 1.0 / samples_per_pixel;
+        sqrt_spp = int(sqrt(samples_per_pixel));
+        pixel_samples_scale = 1.0 / (sqrt_spp * sqrt_spp);
+        recip_sqrt_spp = 1.0 / sqrt_spp;
 
         center = lookfrom;
 
@@ -113,11 +117,11 @@ class camera {
         defocus_disk_v = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const {
+    ray get_ray(int i, int j, int s_i, int s_j) const {
         // Construct a camera ray originating from the defocus disk and directed at
         // a randomly sampled point around the pixel location i,j
 
-        auto offset = sample_square();
+        auto offset = sample_square_stratified(s_i, s_j);
         auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u) + ((j + offset.y()) * pixel_delta_v);
 
         auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
@@ -125,6 +129,17 @@ class camera {
         auto ray_time = random_double();
 
         return ray(ray_origin, ray_direction, ray_time);
+    }
+
+    vec3 sample_square_stratified(int s_i, int s_j) const {
+        // Returns the vector to a random point in the square sub-pixel
+        // specified by the indices s_i and s_j in the grid, for an ideal
+        // unit square pixel [-0.5, -0.5] to [+0.5, +0.5].
+        
+        auto px = ((s_i + random_double()) * recip_sqrt_spp) - 0.5;
+        auto py = ((s_j + random_double()) * recip_sqrt_spp) - 0.5;
+
+        return vec3(px, py, 0);
     }
 
     vec3 sample_square() const {
