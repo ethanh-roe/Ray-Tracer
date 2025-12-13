@@ -405,7 +405,60 @@ void cornell_smoke() {
     cam.render(world, lights);
 }
 
-void final_scene(int image_width, int samples_per_pixel, int max_depth) {
+void cornell_aluminum() {
+    hittable_list world;
+
+    auto red   = make_shared<lambertian>(color(.65, .05, .05));
+    auto white = make_shared<lambertian>(color(.73, .73, .73));
+    auto green = make_shared<lambertian>(color(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+
+    // Room
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    // Light
+    world.add(make_shared<quad>(point3(213,554,227), vec3(130,0,0), vec3(0,0,105), light));
+
+    // Box
+    shared_ptr<material> aluminum = make_shared<metal>(color(0.8, 0.85, 0.88), 0.0);
+    shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), aluminum);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(265,0,295));
+    world.add(box1);
+
+    // Glass Sphere
+    auto glass = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(190,90,190), 90, glass));
+
+    // Light Sources
+    auto empty_material = shared_ptr<material>();
+    hittable_list lights;
+    lights.add(make_shared<quad>(point3(343,554,332), vec3(-130,0,0), vec3(0,0,-105), empty_material));
+    lights.add(make_shared<sphere>(point3(190, 90, 190), 90, empty_material));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = point3(278, 278, -800);
+    cam.lookat   = point3(278, 278, 0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world, lights);
+}
+
+void final_scene() {
     hittable_list boxes1;
     auto ground = make_shared<lambertian>(color(0.48, 0.83, 0.53));
 
@@ -474,9 +527,9 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = image_width;
-    cam.samples_per_pixel = samples_per_pixel;
-    cam.max_depth         = max_depth;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 1000;
+    cam.max_depth         = 50;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -710,12 +763,13 @@ int main(int argc, char *argv[]){
     cout << "(6)  Simple Light"                 << endl;
     cout << "(7)  Cornell Box"                  << endl;
     cout << "(8)  Cornell Box with Smoke Scene" << endl;
-    cout << "(9)  Final Scene"                  << endl;
-    cout << "(10) Triangle Scene"               << endl;
-    cout << "(11) Pyramid Scene"                << endl;
-    cout << "(12) Perlin Pyramid Scene"         << endl;
-    cout << "(13) Stanford Bunny Mesh Scene"    << endl;
-    cout << "(14) Armadillo Mesh Scene"         << endl;
+    cout << "(9)  Cornell Aluminum Box"         << endl;
+    cout << "(10) Final Scene"                  << endl;
+    cout << "(11) Triangle Scene"               << endl;
+    cout << "(12) Pyramid Scene"                << endl;
+    cout << "(13) Perlin Pyramid Scene"         << endl;
+    cout << "(14) Stanford Bunny Mesh Scene"    << endl;
+    cout << "(15) Armadillo Mesh Scene"         << endl;
 
     cout << "Select a scene: ";
     
@@ -723,7 +777,7 @@ int main(int argc, char *argv[]){
 
     if(!input.empty()) {
         stringstream stream(input);
-        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 14){
+        if(!(stream >> selected_scene) || selected_scene < 0 || selected_scene > 15){
             cout << "Invalid input. Using default scene" << endl;
             selected_scene = 7;
         }
@@ -776,31 +830,36 @@ int main(int argc, char *argv[]){
         break;
 
         case 9:
-        cout << "Rendering Final Sceen" << endl;
-        final_scene(800, 10000, 50);
+        cout << "Rendering Cornell Aluminum Box Scene" << endl;
+        cornell_aluminum();
         break;
 
         case 10:
+        cout << "Rendering Final Sceen" << endl;
+        final_scene();
+        break;
+
+        case 11:
         cout << "Rendering Triangle Scene" << endl;
         triangle_scene();
         break;
 
-        case 11:
+        case 12:
         cout << "Rendering Pyramid Scene" << endl;
         pyramid_scene();
         break;
 
-        case 12:
+        case 13:
         cout << "Rendering Perlin Pyramid Scene" << endl;
         perlin_pyramid_scene();
         break;
 
-        case 13:
+        case 14:
         cout << "Rendering Stanford Bunny Mesh" << endl;
         stanford_bunny_mesh_scene();
         break;
 
-        case 14:
+        case 15:
         cout << "Rendering Armadillo Mesh" << endl;
         armadillo_mesh_scene();
         break;
