@@ -66,11 +66,16 @@ void bouncing_spheres(){
 
     world = hittable_list(make_shared<bvh_node>(world));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -82,7 +87,7 @@ void bouncing_spheres(){
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
     
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void checkered_spheres() {
@@ -93,11 +98,16 @@ void checkered_spheres() {
     world.add(make_shared<sphere>(point3(0,-10, 0), 10, make_shared<lambertian>(checker)));
     world.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -108,7 +118,7 @@ void checkered_spheres() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void test_scene1(){
@@ -131,12 +141,16 @@ void test_scene1(){
     auto center2 = center + vec3(0, random_double(0, 0.5), 0);
     world.add(make_shared<sphere>(center, center2, 0.2, material_right));
     
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
 
     camera cam;
 
     cam.aspect_ratio        = 16.0 / 9.0;
     cam.image_width         = 400;
-    cam.samples_per_pixel   = 100;
+    cam.samples_per_pixel   = 1000;
     cam.max_depth           = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -148,19 +162,28 @@ void test_scene1(){
     cam.defocus_angle = 0.0;
     cam.focus_dist = 1.5;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void earth() {
+    hittable_list world;
+    
     auto earth_texture = make_shared<image_texture>("../media/earthmap.jpg");
     auto earth_surface = make_shared<lambertian>(earth_texture);
     auto globe = make_shared<sphere>(point3(0, 0, 0), 2, earth_surface);
+
+    world.add(globe);
+
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
 
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -171,7 +194,7 @@ void earth() {
 
     cam.defocus_angle = 0;
 
-    cam.render(hittable_list(globe));
+    cam.render(world, lights);
 }
 
 void perlin_spheres() {
@@ -181,11 +204,16 @@ void perlin_spheres() {
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
     world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -196,7 +224,7 @@ void perlin_spheres() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void quads() {
@@ -216,11 +244,16 @@ void quads() {
     world.add(make_shared<quad>(point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
     world.add(make_shared<quad>(point3(-2,-3, 5), vec3(4, 0, 0), vec3(0, 0,-4), lower_teal));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -231,7 +264,7 @@ void quads() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void simple_light() {
@@ -241,15 +274,23 @@ void simple_light() {
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
     world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
 
-    auto difflight = make_shared<diffuse_light>(color(4,4,4));
-    world.add(make_shared<sphere>(point3(0,7,0), 2, difflight));
-    world.add(make_shared<quad>(point3(3,1,-2), vec3(2,0,0), vec3(0,2,0), difflight));
+    auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
+    auto sphere_light = make_shared<sphere>(point3(0, 7, 0), 2, difflight);
+    auto quad_light = make_shared<quad>(point3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0), difflight);
+
+    world.add(sphere_light);
+    world.add(quad_light);
+
+    // Light Sources
+    hittable_list lights;
+    lights.add(sphere_light);
+    lights.add(quad_light);
 
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0,0,0);
 
@@ -260,7 +301,7 @@ void simple_light() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void cornell_box() {
@@ -274,26 +315,33 @@ void cornell_box() {
     // Room
     world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
     world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
-    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
     world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
     world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
     world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
 
-    // Boxes
+    // Light
+    world.add(make_shared<quad>(point3(213,554,227), vec3(130,0,0), vec3(0,0,105), light));
+
+    // Box
     shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
     box1 = make_shared<rotate_y>(box1, 15);
     box1 = make_shared<translate>(box1, vec3(265,0,295));
     world.add(box1);
 
-    shared_ptr<hittable> box2 = box(point3(0,0,0), point3(165,165,165), white);
-    box2 = make_shared<rotate_y>(box2, -18);
-    box2 = make_shared<translate>(box2, vec3(130,0,65));
-    world.add(box2);
+    // Glass Sphere
+    auto glass = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(190,90,190), 90, glass));
+
+    // Light Sources
+    auto empty_material = shared_ptr<material>();
+    hittable_list lights;
+    lights.add(make_shared<quad>(point3(343,554,332), vec3(-130,0,0), vec3(0,0,-105), empty_material));
+    lights.add(make_shared<sphere>(point3(190, 90, 190), 90, empty_material));
 
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 600;
+    cam.image_width       = 800;
     cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0,0,0);
@@ -305,7 +353,7 @@ void cornell_box() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void cornell_smoke() {
@@ -334,11 +382,16 @@ void cornell_smoke() {
     world.add(make_shared<constant_medium>(box1, 0.01, color(0,0,0)));
     world.add(make_shared<constant_medium>(box2, 0.01, color(1,1,1)));
 
+    // Light Sources
+    auto empty_material = shared_ptr<material>();
+    hittable_list lights;
+    lights.add(make_shared<quad>(point3(113,554,127), vec3(330,0,0), vec3(0,0,305), empty_material));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 600;
-    cam.samples_per_pixel = 200;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0,0,0);
 
@@ -349,7 +402,7 @@ void cornell_smoke() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void final_scene(int image_width, int samples_per_pixel, int max_depth) {
@@ -413,6 +466,11 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
         )
     );
 
+    // Light Sources
+    auto empty_material = shared_ptr<material>();
+    hittable_list lights;
+    lights.add(make_shared<quad>(point3(123,554,147), vec3(300,0,0), vec3(0,0,265), empty_material));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
@@ -428,7 +486,7 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void triangle_scene() {
@@ -444,11 +502,16 @@ void triangle_scene() {
     world.add(make_shared<triangle>(point3(-2, -2, 0), point3( 2, -2, 0), point3(-2, 2, 0), green));
     world.add(make_shared<triangle>(point3( 3, -2, 1), point3( 3, -2, 5), point3( 3, 2, 1), blue));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -459,7 +522,7 @@ void triangle_scene() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void pyramid_scene() {
@@ -493,11 +556,16 @@ void pyramid_scene() {
     world.add(make_shared<triangle>(apex, C, D, blue));
     world.add(make_shared<triangle>(apex, D, A, orange));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -508,7 +576,7 @@ void pyramid_scene() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void perlin_pyramid_scene(){
@@ -535,11 +603,16 @@ void perlin_pyramid_scene(){
     world.add(make_shared<triangle>(apex, C, D, make_shared<lambertian>(pertext)));
     world.add(make_shared<triangle>(apex, D, A, make_shared<lambertian>(pertext)));
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
     cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 1000;
     cam.max_depth         = 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -550,7 +623,7 @@ void perlin_pyramid_scene(){
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void stanford_bunny_mesh_scene(){
@@ -570,6 +643,11 @@ void stanford_bunny_mesh_scene(){
 
     world.add(mesh_bvh);
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
     cam.lookfrom = mesh_center + vec3(0, radius, radius * 3);
     cam.lookat   = mesh_center;
@@ -577,10 +655,10 @@ void stanford_bunny_mesh_scene(){
     cam.vfov     = 40;
     cam.aspect_ratio = 1.0;
     cam.image_width = 400;
-    cam.samples_per_pixel = 50;
+    cam.samples_per_pixel = 1000;
     cam.background = color(0.7, 0.8, 1.0);
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 void armadillo_mesh_scene() {
@@ -600,17 +678,23 @@ void armadillo_mesh_scene() {
 
     world.add(mesh_bvh);
 
+    // Light Sources
+    hittable_list lights;
+    auto dummy_light = make_shared<diffuse_light>(color(0, 0, 0));
+    lights.add(make_shared<quad>(point3(0, 0, -1000), vec3(1000, 0, 0), vec3(0, 1000, 0), dummy_light));
+
     camera cam;
+
     cam.lookfrom = mesh_center - vec3(0, radius / -2, radius * 2);
     cam.lookat   = mesh_center;
     cam.vup      = vec3(0,1,0);
     cam.vfov     = 40;
     cam.aspect_ratio = 1.0;
     cam.image_width = 400;
-    cam.samples_per_pixel = 50;
+    cam.samples_per_pixel = 1000;
     cam.background = color(0.7, 0.8, 1.0);
 
-    cam.render(world);
+    cam.render(world, lights);
 }
 
 int main(int argc, char *argv[]){
@@ -647,37 +731,37 @@ int main(int argc, char *argv[]){
     
     switch (selected_scene) {
         case 0: 
-        cout << "Rending Bouncing Spheres Scene" << endl;
+        cout << "Rendering Bouncing Spheres Scene" << endl;
         bouncing_spheres();
         break;
 
         case 1: 
-        cout << "Rending Checkered Spheres Scene" << endl;
+        cout << "Rendering Checkered Spheres Scene" << endl;
         checkered_spheres();
         break;
 
         case 2: 
-        cout << "Rending Test Scene" << endl;
+        cout << "Rendering Test Scene" << endl;
         test_scene1();
         break;
 
         case 3: 
-        cout << "Rending Earth Scene" << endl;
+        cout << "Rendering Earth Scene" << endl;
         earth();
         break;
 
         case 4: 
-        cout << "Rending Perlin Noise Spheres Scene" << endl;
+        cout << "Rendering Perlin Noise Spheres Scene" << endl;
         perlin_spheres();
         break;
 
         case 5: 
-        cout << "Rending Quads Scene" << endl;
+        cout << "Rendering Quads Scene" << endl;
         quads();
         break;
 
         case 6: 
-        cout << "Rending Simple Light Scene" << endl;
+        cout << "Rendering Simple Light Scene" << endl;
         simple_light();
         break;
 
@@ -693,7 +777,7 @@ int main(int argc, char *argv[]){
 
         case 9:
         cout << "Rendering Final Sceen" << endl;
-        final_scene(400, 250, 4);
+        final_scene(800, 10000, 50);
         break;
 
         case 10:
