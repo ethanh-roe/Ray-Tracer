@@ -1,5 +1,5 @@
 # Ray-Tracer
-A ray tracer I am actively developing for my Intro to Computer Graphics course.
+A ray tracer I am actively developing for my Intro to Computer Graphics course. The ray tracer was developed mainly using "Ray Tracing in One Weekend - The Book Series" (https://raytracing.github.io/).
 
 # Description of files in include/
 ## aabb.h
