@@ -703,7 +703,7 @@ int main(int argc, char *argv[]){
 
     cout << "(0)  Bouncing Spheres <-- Default" << endl;
     cout << "(1)  Checkered Spheres"            << endl;
-    cout << "(2)  Test"                         << endl;
+    cout << "(2)  Sphere Test"                  << endl;
     cout << "(3)  Earth"                        << endl;
     cout << "(4)  Perlin Noise Spheres"         << endl;
     cout << "(5)  Quads"                        << endl;
