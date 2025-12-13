@@ -48,7 +48,7 @@ class camera {
                 }
             }
 
-
+            // Write image to file
             f = fopen("test_image.ppm", "w");
             fprintf(f, "P3\n%d %d\n255\n", image_width, image_height);
 
