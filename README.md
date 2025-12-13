@@ -1,5 +1,6 @@
 # Ray-Tracer
 A ray tracer I am actively developing for my Intro to Computer Graphics course. The ray tracer was developed mainly using "Ray Tracing in One Weekend - The Book Series" (https://raytracing.github.io/).
+The program is interactive, enter the number associated with the scene to render that scene. After a scene is rendered the program must be ran again to render another scene. The renderer will output a .ppm file named image.
 
 # Description of files in include/
 ## aabb.h
