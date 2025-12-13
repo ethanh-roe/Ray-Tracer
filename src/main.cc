@@ -121,7 +121,7 @@ void checkered_spheres() {
     cam.render(world, lights);
 }
 
-void test_scene1(){
+void spheres_test(){
     // World
     hittable_list world;
 
@@ -741,8 +741,8 @@ int main(int argc, char *argv[]){
         break;
 
         case 2: 
-        cout << "Rendering Test Scene" << endl;
-        test_scene1();
+        cout << "Rendering Spheres Test Scene" << endl;
+        spheres_test();
         break;
 
         case 3: 
