@@ -24,7 +24,7 @@ Defines an interval class used for simplifying intersection testing.
 ## material.h
 Defines an abstract material class along with lambertian, metal, dielectric, diffuse, and isotropic materials. 
 ## mesh_loader.h
-Handles loading of triangle meshes from .obj files into triangle objects using the stb_image library. 
+Handles loading of triangle meshes from .obj files into triangle objects. 
 ## onb.h
 Defines an orthonormal basis class for converting sample coordinates into world space coordinates during sampling.
 ## pdf.h
